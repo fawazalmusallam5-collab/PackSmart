@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>PackSmart</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PackSmart</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
+  }
+
+  .app {
+    max-width: 420px;
+    margin: auto;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .add-box {
+    background: #f3f3f3;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin: 6px 0;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: none;
+    border-radius: 10px;
+    background: #667eea;
+    color: white;
+    cursor: pointer;
+  }
+
+  .subject {
+    background: #667eea;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6px 0;
+  }
+
+  .item button {
+    background: red;
+    width: auto;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <h1>🎒 PackSmart</h1>
+
+  <div class="add-box">
+    <input id="subjectInput" placeholder="Subject (e.g. Math)">
+    <input id="itemInput" placeholder="Item (e.g. Homework)">
+    <button onclick="addItem()">Add Item</button>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+  const list = document.getElementById("list");
+
+  let data = JSON.parse(localStorage.getItem("packsmart")) || {};
+
+  function save() {
+    localStorage.setItem("packsmart", JSON.stringify(data));
+  }
+
+  function addItem() {
+    const subject = document.getElementById("subjectInput").value.trim();
+    const item = document.getElementById("itemInput").value.trim();
+
+    if (!subject || !item) {
+      alert("Fill in both fields");
+      return;
+    }
+
+    if (!data[subject]) {
+      data[subject] = [];
+    }
+
+    data[subject].push({ text: item, done: false });
+    save();
+    render();
+
+    document.getElementById("itemInput").value = "";
+  }
+
+  function toggle(subject, index) {
+    data[subject][index].done = !data[subject][index].done;
+    save();
+    render();
+  }
+
+  function deleteItem(subject, index) {
+    data[subject].splice(index, 1);
+    if (data[subject].length === 0) {
+      delete data[subject];
+    }
+    save();
+    render();
+  }
+
+  function render() {
+    list.innerHTML = "";
+
+    for (const subject in data) {
+      const box = document.createElement("div");
+      box.className = "subject";
+      box.innerHTML = `<h3>${subject}</h3>`;
+
+      data[subject].forEach((item, i) => {
+        const row = document.createElement("div");
+        row.className = "item";
+
+        row.innerHTML = `
+          <label>
+            <input type="checkbox" ${item.done ? "checked" : ""} 
+              onclick="toggle('${subject}', ${i})">
+            ${item.text}
+          </label>
+          <button onclick="deleteItem('${subject}', ${i})">✖</button>
+        `;
+
+        box.appendChild(row);
+      });
+
+      list.appendChild(box);
+    }
+  }
+
+  render();
+</script>
+
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
